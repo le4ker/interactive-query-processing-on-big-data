@@ -1,6 +1,5 @@
-package com.foundationdb.sql.test;
+package test;
 
-import com.foundationdb.sql.StandardException;
 import com.foundationdb.sql.parser.SQLParserException;
 import com.foundationdb.sql.query.SQLQuery;
 import com.foundationdb.sql.query.SQLQueryParser;

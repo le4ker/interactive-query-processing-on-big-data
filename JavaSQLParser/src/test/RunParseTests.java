@@ -1,4 +1,4 @@
-package com.foundationdb.sql.test;
+package test;
 
 import java.lang.reflect.Method;
 
