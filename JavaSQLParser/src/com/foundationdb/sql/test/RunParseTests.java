@@ -10,7 +10,7 @@ public class RunParseTests {
 
     public static void main(String[] args) throws Exception {
         for (Method test : ParseTests.class.getMethods()) {
-            System.out.println(test.getName() + ": " + test.invoke(ParseTests.class, null));
+            System.out.println(test.getName() + ": " + test.invoke(null, null));
         }
     }
 }
