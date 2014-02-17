@@ -120,7 +120,7 @@ public class ParseTests {
             SQLQuery query = SQLQueryParser.parse(
                     "select " +
                     " n_name, " +
-                    " sum(l.l_extendedprice) as revenue " + // TODO support column operators
+                    " sum(l_extendedprice * (1 - l_discount)) as revenue " + // TODO support column operations in aggregation functions
                     "from customer c, orders o, lineitem l, supplier s, nation n, region r " +
                     " where " +
                     "     c.c_custkey = o.o_custkey " +

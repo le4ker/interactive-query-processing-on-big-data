@@ -13,5 +13,4 @@ public class RunParseTests {
             System.out.println(test.getName() + ": " + test.invoke(ParseTests.class, null));
         }
     }
-
 }
