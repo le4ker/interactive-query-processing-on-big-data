@@ -17,7 +17,7 @@ public class Cloudify {
         cloudQuery.leafQuery.joins = cloudQuery.sqlQuery.joins;
         cloudQuery.leafQuery.filters = cloudQuery.sqlQuery.filters;
 
-        Cloudify.cloudifyOutputFunction(cloudQuery);
+        Cloudify.cloudifyOutputFunctions(cloudQuery);
         Cloudify.cloudifyGroupBy(cloudQuery);
         Cloudify.cloudifyOrderBy(cloudQuery);
         Cloudify.cloudifyLimit(cloudQuery);
@@ -25,7 +25,7 @@ public class Cloudify {
         return cloudQuery;
     }
 
-    private static void cloudifyOutputFunction(CloudQuery cloudQuery) {
+    private static void cloudifyOutputFunctions(CloudQuery cloudQuery) {
         for (OutputFunction aggregationFunction : cloudQuery.sqlQuery.outputFunctions) {
             switch (aggregationFunction.functionName) {
                 case "count":
