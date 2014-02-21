@@ -22,11 +22,11 @@ public class CloudQuery {
     public String toString () {
         StringBuilder output = new StringBuilder();
 
-        output.append("Root query:\n");
+        output.append("Root query:");
         output.append(rootQuery);
-        output.append("\nInternal query:\n");
+        output.append("\nInternal query:");
         output.append(internalQuery);
-        output.append("\nLeaf query:\n");
+        output.append("\nLeaf query:");
         output.append(leafQuery);
 
         return output.toString();
