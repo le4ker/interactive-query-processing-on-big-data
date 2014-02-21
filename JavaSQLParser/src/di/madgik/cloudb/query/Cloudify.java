@@ -1,5 +1,6 @@
 package di.madgik.cloudb.query;
 
+import com.foundationdb.sql.query.OutputFunction;
 import com.foundationdb.sql.query.SQLQuery;
 
 /**
@@ -24,7 +25,22 @@ public class Cloudify {
     }
 
     private static void cloudifyOutputFunction(CloudQuery cloudQuery) {
-        // TODO
+        for (OutputFunction aggregationFunction : cloudQuery.sqlQuery.outputFunctions) {
+            switch (aggregationFunction.functionName) {
+                case "count":
+
+                    break;
+                case "sum":
+
+                    break;
+                case "min":
+
+                    break;
+                case "max":
+
+                    break;
+            }
+        }
     }
 
     private static void cloudifyGroupBy(CloudQuery cloudQuery) {
