@@ -1,11 +1,8 @@
-package test;
+package com.foundationdb.sql.demo.parser;
 
 import com.foundationdb.sql.parser.SQLParserException;
 import com.foundationdb.sql.query.SQLQuery;
 import com.foundationdb.sql.query.SQLQueryParser;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 /**
  * Created by panossakkos on 2/15/14.
@@ -17,9 +14,6 @@ public class ParseTests {
 
     public static boolean query1 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
-
             SQLQuery query = SQLQueryParser.parse(
                     " select l.l_returnflag, l.l_linestatus, " +
                     " avg(l.l_discount) as avg_disc, " +
@@ -44,9 +38,6 @@ public class ParseTests {
 
     public static boolean query2 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
-
             SQLQuery query = SQLQueryParser.parse(
                     "select l.l_orderkey," +
                     // TODO support column operations in aggregation functions
@@ -79,8 +70,6 @@ public class ParseTests {
 
     public static boolean query3 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
                     " select  o.o_orderpriority, " +
@@ -115,8 +104,6 @@ public class ParseTests {
 
     public static boolean query4 () throws Exception{
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
                     "select " +
@@ -152,8 +139,6 @@ public class ParseTests {
 
     public static boolean query5 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
                 " select " +
@@ -199,8 +184,6 @@ public class ParseTests {
 
     public static boolean query6 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
                 " select " +
@@ -246,8 +229,6 @@ public class ParseTests {
 
     public static boolean query7 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
                 " select " +

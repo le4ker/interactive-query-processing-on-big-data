@@ -1,4 +1,4 @@
-package test;
+package com.foundationdb.sql.demo.parser;
 
 import java.lang.reflect.Method;
 
