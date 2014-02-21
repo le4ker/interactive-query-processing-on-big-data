@@ -23,7 +23,7 @@ public class ParseTests {
             SQLQuery query = SQLQueryParser.parse(
                     " select l.l_returnflag, l.l_linestatus, " +
                     " avg(l.l_discount) as avg_disc, " +
-                    " count(l.l_linestatus) as count_order " + // TODO count (*)
+                    " count(l.l_orderkey) as count_order " +
                     " from lineitem l" +
                     " where l.l_shipdate <= '1998-12-01' " +
                     " group by l.l_returnflag, l.l_linestatus " +
@@ -83,9 +83,8 @@ public class ParseTests {
             Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
-                    " select  o.o_orderpriority, " +
-                    // TODO count (*) or count a not-null column
-                    " count(*) as order_count " +
+                    " select o.o_orderpriority, " +
+                    " count(o.o_orderkey) as order_count " +
                     " from orders o " +
                     " where " +
                     " o.o_orderdate >= '1993-03-01' " +
