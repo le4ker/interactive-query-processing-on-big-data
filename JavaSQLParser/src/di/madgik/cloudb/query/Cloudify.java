@@ -10,8 +10,6 @@ public class Cloudify {
     public static CloudQuery toCloud(SQLQuery query) {
         CloudQuery cloudQuery = new CloudQuery(query);
 
-        /* Leaf-level input tables, joins and filters are the query's filters */
-
         cloudQuery.leafQuery.outputColumns = cloudQuery.sqlQuery.outputColumns;
         cloudQuery.leafQuery.inputTables = cloudQuery.sqlQuery.inputTables;
         cloudQuery.leafQuery.joins = cloudQuery.sqlQuery.joins;
