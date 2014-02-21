@@ -11,7 +11,7 @@ public class RootQuery extends SQLQuery {
 
     public RootQuery () {
         Table internalTable = new Table();
-        internalTable.name = "Leaf Level";
+        internalTable.name = "Internal Level";
 
         this.inputTables.add(internalTable);
     }
