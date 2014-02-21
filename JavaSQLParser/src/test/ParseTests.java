@@ -48,12 +48,11 @@ public class ParseTests {
             Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
-                    "select l.l_orderkey," +
-                    // TODO support column operations in aggregation functions
-                    " sum(l_extendedprice * (1 - l_discount)) as revenue, " +
+                    " select l.l_orderkey, l.l_discount, " +
+                    " sum(l.l_extendedprice) as revenue, " +
                     " o.o_orderdate, " +
                     " o.o_shippriority " +
-                    " from customer_load c, orders_load o, lineitem_load l " +
+                    " from customer c, orders o, lineitem l " +
                     " where " +
                     "    c.c_custkey = o.o_custkey and " +
                     "    l.l_orderkey = o.o_orderkey and  " +
@@ -118,11 +117,10 @@ public class ParseTests {
             Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
-                    "select " +
-                    " n_name, " +
-                    // TODO support column operations in aggregation functions
-                    " sum(l_extendedprice * (1 - l_discount)) as revenue " +
-                    "from customer c, orders o, lineitem l, supplier s, nation n, region r " +
+                    "select l.l_discount," +
+                    " n.n_name, " +
+                    " sum(l.l_extendedprice) as revenue " +
+                    " from customer c, orders o, lineitem l, supplier s, nation n, region r " +
                     " where " +
                     "     c.c_custkey = o.o_custkey " +
                     "     and l.l_orderkey = o.o_orderkey " +
@@ -165,8 +163,7 @@ public class ParseTests {
                 "    select " +
                 "      n1.n_name as supp_nation, " +
                 "      n2.n_name as cust_nation, " +
-                // TODO CharConstantNode cannot be cast to com.foundationdb.sql.parser.ColumnReference (?)
-                "      strftime('%Y', l.l_shipdate) as l_year, " +
+                "      l.l_shipdate as l_year, " +
                 "      l.l_extendedprice * (1 - l.l_discount) as volume " +
                 "    from supplier s, lineitem l, orders o, customer c, nation n1, nation n2 " +
                 "    where " +
@@ -209,10 +206,9 @@ public class ParseTests {
                 " from " +
                 "  ( " +
                 "    select" +
-                "      n_name as nation," +
-                // TODO CharConstantNode cannot be cast to com.foundationdb.sql.parser.ColumnReference (?)
-                "      strftime('%Y', o_orderdate) as o_year," +
-                "      l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount " +
+                "      n.n_name as nation," +
+                "      o.o_orderdate as o_year," +
+                "      l.l_extendedprice * (1 - l.l_discount) - ps.ps_supplycost * l.l_quantity as amount " +
                 "    from part p, supplier s, lineitem l, partsupp ps, orders o, nation n" +
                 "    where " +
                 "              s.s_suppkey = l.l_suppkey " +
@@ -258,8 +254,7 @@ public class ParseTests {
                         " from " +
                         "  (" +
                         "    select " +
-                        // TODO CharConstantNode cannot be cast to com.foundationdb.sql.parser.ColumnReference (?)
-                        "      strftime('%Y', o_orderdate) as o_year, " +
+                        "      o.o_orderdate o_year, " +
                         "      l.l_extendedprice * (1 - l.l_discount) as volume, " +
                         "      n2.n_name as nation " +
                         "    from part p, supplier s, lineitem l, orders o, customer c, nation n1, nation n2, region r" +
