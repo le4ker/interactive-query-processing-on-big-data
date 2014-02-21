@@ -8,7 +8,7 @@ import com.foundationdb.sql.query.SQLQuery;
 
 public class CloudQuery {
 
-    public SQLQuery sqlQuery;
+    protected final SQLQuery sqlQuery;
 
     public RootQuery rootQuery = new RootQuery();
     public InternalQuery internalQuery = new InternalQuery();
