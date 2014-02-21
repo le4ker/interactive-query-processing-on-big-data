@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 public class RunParseTests {
 
     public static void main(String[] args) throws Exception {
-        for (Method test : ParseTests.class.getMethods()) {
+        for (Method test : ParseTests.class.getDeclaredMethods()) {
             System.out.println(test.getName() + ": " + test.invoke(null, null));
         }
     }
