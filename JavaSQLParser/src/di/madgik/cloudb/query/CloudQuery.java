@@ -12,4 +12,17 @@ public class CloudQuery extends SQLQuery {
     private InternalQuery internalQuery;
     private LeafQuery leafQuery;
 
+    @Override
+    public String toString () {
+        StringBuilder output = new StringBuilder();
+
+        output.append("Root query:\n");
+        output.append(rootQuery);
+        output.append("\nInternal query:\n");
+        output.append(internalQuery);
+        output.append("\nLeaf query:\n");
+        output.append(leafQuery);
+
+        return output.toString();
+    }
 }
