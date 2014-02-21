@@ -15,11 +15,16 @@ public class Cloudify {
         cloudQuery.leafQuery.joins = cloudQuery.sqlQuery.joins;
         cloudQuery.leafQuery.filters = cloudQuery.sqlQuery.filters;
 
+        Cloudify.cloudifyOutputFunction(cloudQuery);
         Cloudify.cloudifyGroupBy(cloudQuery);
         Cloudify.cloudifyOrderBy(cloudQuery);
         Cloudify.cloudifyLimit(cloudQuery);
-
+        
         return cloudQuery;
+    }
+
+    private static void cloudifyOutputFunction(CloudQuery cloudQuery) {
+        // TODO
     }
 
     private static void cloudifyGroupBy(CloudQuery cloudQuery) {
