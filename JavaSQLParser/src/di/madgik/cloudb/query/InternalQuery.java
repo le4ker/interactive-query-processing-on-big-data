@@ -11,7 +11,7 @@ public class InternalQuery extends SQLQuery {
 
     public InternalQuery () {
         Table leafTable = new Table();
-        leafTable.name = "Leaf Level";
+        leafTable.name = "Leaf";
         leafTable.alias = "leaf";
 
         this.inputTables.add(leafTable);
