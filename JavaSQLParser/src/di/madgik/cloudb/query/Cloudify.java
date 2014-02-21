@@ -23,10 +23,10 @@ public class Cloudify {
         return cloudQuery;
     }
 
-    private static void cloudifyLimit(CloudQuery cloudQuery) {
-        cloudQuery.leafQuery.limit= cloudQuery.sqlQuery.limit;
-        cloudQuery.internalQuery.limit = cloudQuery.sqlQuery.limit;
-        cloudQuery.rootQuery.limit = cloudQuery.sqlQuery.limit;
+    private static void cloudifyGroupBy(CloudQuery cloudQuery) {
+        cloudQuery.leafQuery.groupBy = cloudQuery.sqlQuery.groupBy;
+        cloudQuery.internalQuery.groupBy = cloudQuery.sqlQuery.groupBy;
+        cloudQuery.rootQuery.groupBy = cloudQuery.sqlQuery.groupBy;
     }
 
     private static void cloudifyOrderBy(CloudQuery cloudQuery) {
@@ -35,10 +35,9 @@ public class Cloudify {
         cloudQuery.rootQuery.orderBy = cloudQuery.sqlQuery.orderBy;
     }
 
-    private static void cloudifyGroupBy(CloudQuery cloudQuery) {
-        cloudQuery.leafQuery.groupBy = cloudQuery.sqlQuery.groupBy;
-        cloudQuery.internalQuery.groupBy = cloudQuery.sqlQuery.groupBy;
-        cloudQuery.rootQuery.groupBy = cloudQuery.sqlQuery.groupBy;
+    private static void cloudifyLimit(CloudQuery cloudQuery) {
+        cloudQuery.leafQuery.limit= cloudQuery.sqlQuery.limit;
+        cloudQuery.internalQuery.limit = cloudQuery.sqlQuery.limit;
+        cloudQuery.rootQuery.limit = cloudQuery.sqlQuery.limit;
     }
-
 }
