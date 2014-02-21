@@ -6,11 +6,17 @@ import com.foundationdb.sql.query.SQLQuery;
  * Created by panossakkos on 2/21/14.
  */
 
-public class CloudQuery extends SQLQuery {
+public class CloudQuery {
+
+    public SQLQuery sqlQuery;
 
     public RootQuery rootQuery = new RootQuery();
     public InternalQuery internalQuery = new InternalQuery();
     public LeafQuery leafQuery = new LeafQuery();
+
+    public CloudQuery(SQLQuery sqlQuery) {
+        this.sqlQuery = sqlQuery;
+    }
 
     @Override
     public String toString () {
