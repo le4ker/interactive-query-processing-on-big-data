@@ -8,9 +8,9 @@ import com.foundationdb.sql.query.SQLQuery;
 
 public class CloudQuery extends SQLQuery {
 
-    private RootQuery rootQuery;
-    private InternalQuery internalQuery;
-    private LeafQuery leafQuery;
+    public RootQuery rootQuery = new RootQuery();
+    public InternalQuery internalQuery = new InternalQuery();
+    public LeafQuery leafQuery = new LeafQuery();
 
     @Override
     public String toString () {

@@ -28,7 +28,6 @@ public class SQLQuery {
   public String toString() {
     StringBuilder output = new StringBuilder();
     // Print project columns
-    output.append("Project");
     for (OutputColumn c : outputColumns) {
       output.append("\n\t" + c.toString());
     }

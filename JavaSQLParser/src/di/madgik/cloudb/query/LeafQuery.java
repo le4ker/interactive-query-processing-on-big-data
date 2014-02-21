@@ -7,4 +7,9 @@ import com.foundationdb.sql.query.SQLQuery;
  */
 
 public class LeafQuery extends SQLQuery {
+
+    @Override
+    public String toString() {
+        return super.toString().replace("\n", "\n\t");
+    }
 }
