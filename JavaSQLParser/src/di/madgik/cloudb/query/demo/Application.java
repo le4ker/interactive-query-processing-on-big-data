@@ -13,7 +13,7 @@ public class Application {
 
     private static String query = " select l.orderkey " +
                                   " from lineitem l " +
-                                  " where l.orerkey > 100";
+                                  " where l.orderkey > 100";
 
     public static void main (String []args) throws Exception {
 
