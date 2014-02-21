@@ -11,13 +11,13 @@ import java.util.List;
  * @author heraldkllapi
  */
 public class SQLQuery {
-  public final List<OutputColumn> outputColumns = new ArrayList<OutputColumn>();
-  public final List<OutputFunction> outputFunctions = new ArrayList<OutputFunction>();
-  public final List<Table> inputTables = new ArrayList<Table>();
-  public final List<Filter> filters = new ArrayList<Filter>();
-  public final List<Join> joins = new ArrayList<Join>();
-  public final List<Column> groupBy = new ArrayList<Column>();
-  public final List<Column> orderBy = new ArrayList<Column>();
+  public List<OutputColumn> outputColumns = new ArrayList<OutputColumn>();
+  public List<OutputFunction> outputFunctions = new ArrayList<OutputFunction>();
+  public List<Table> inputTables = new ArrayList<Table>();
+  public List<Filter> filters = new ArrayList<Filter>();
+  public List<Join> joins = new ArrayList<Join>();
+  public List<Column> groupBy = new ArrayList<Column>();
+  public List<Column> orderBy = new ArrayList<Column>();
   public int limit = -1;
 
   public SQLQuery() {
