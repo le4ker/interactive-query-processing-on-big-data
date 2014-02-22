@@ -3,6 +3,8 @@ package di.madgik.cloudb.query;
 import com.foundationdb.sql.query.OutputFunction;
 import com.foundationdb.sql.query.SQLQuery;
 
+import java.util.HashMap;
+
 /**
  * Created by panossakkos on 2/21/14.
  */
@@ -25,6 +27,20 @@ public class Cloudify {
         return cloudQuery;
     }
 
+    private static HashMap<String, Integer> aliases = new HashMap<String, Integer>();
+
+    private static String generateAlias(String aggregationFunction) {
+        if (Cloudify.aliases.containsKey(aggregationFunction) == false) {
+            Cloudify.aliases.put(aggregationFunction, 1);
+        }
+
+        String newAlias = aggregationFunction + "_" + Integer.toString(Cloudify.aliases.get(aggregationFunction));
+
+        Cloudify.aliases.put(aggregationFunction, Cloudify.aliases.get(aggregationFunction) + 1);
+
+        return newAlias;
+    }
+
     private static void cloudifyOutputFunctions(CloudQuery cloudQuery) {
         for (OutputFunction aggregationFunction : cloudQuery.sqlQuery.outputFunctions) {
             switch (aggregationFunction.functionName) {
@@ -42,6 +58,8 @@ public class Cloudify {
                     break;
             }
         }
+
+        Cloudify.aliases.clear();
     }
 
     private static void cloudifyGroupBy(CloudQuery cloudQuery) {
