@@ -1,4 +1,4 @@
-package di.madgik.cloudb.query;
+package di.madgik.cloudb.adapter;
 
 import com.foundationdb.sql.query.SQLQuery;
 
