@@ -58,14 +58,14 @@ public class Cloudify {
                 internalFunction.functionName = "sum";
                 internalFunction.outputName = Cloudify.generateAlias("sum");
                 Column internalColumn = new Column();
-                internalColumn.columnName = leafFunction.outputName;
+                internalColumn.tableAlias = leafFunction.outputName;
                 internalFunction.params.add(internalColumn);
                 cloudQuery.internalQuery.outputFunctions.add(internalFunction);
 
                 OutputFunction rootFunction = new OutputFunction();
                 rootFunction.functionName = "sum";
                 Column rootColumn = new Column();
-                rootColumn.columnName = internalFunction.outputName;
+                rootColumn.tableAlias = internalFunction.outputName;
                 rootFunction.params.add(rootColumn);
                 cloudQuery.rootQuery.outputFunctions.add(rootFunction);
             }
@@ -80,14 +80,14 @@ public class Cloudify {
                 internalFunction.functionName = "sum";
                 internalFunction.outputName = Cloudify.generateAlias("sum");
                 Column internalColumn = new Column();
-                internalColumn.columnName = leafFunction.outputName;
+                internalColumn.tableAlias = leafFunction.outputName;
                 internalFunction.params.add(internalColumn);
                 cloudQuery.internalQuery.outputFunctions.add(internalFunction);
 
                 OutputFunction rootFunction = new OutputFunction();
                 rootFunction.functionName = "sum";
                 Column rootColumn = new Column();
-                rootColumn.columnName = internalFunction.outputName;
+                rootColumn.tableAlias = internalFunction.outputName;
                 rootFunction.params.add(rootColumn);
                 cloudQuery.rootQuery.outputFunctions.add(rootFunction);
             }
@@ -102,14 +102,14 @@ public class Cloudify {
                 internalFunction.functionName = "min";
                 internalFunction.outputName = Cloudify.generateAlias("min");
                 Column internalColumn = new Column();
-                internalColumn.columnName = leafFunction.outputName;
+                internalColumn.tableAlias = leafFunction.outputName;
                 internalFunction.params.add(internalColumn);
                 cloudQuery.internalQuery.outputFunctions.add(internalFunction);
 
                 OutputFunction rootFunction = new OutputFunction();
                 rootFunction.functionName = "min";
                 Column rootColumn = new Column();
-                rootColumn.columnName = internalFunction.outputName;
+                rootColumn.tableAlias = internalFunction.outputName;
                 rootFunction.params.add(rootColumn);
                 cloudQuery.rootQuery.outputFunctions.add(rootFunction);
             }
@@ -124,14 +124,14 @@ public class Cloudify {
                 internalFunction.functionName = "max";
                 internalFunction.outputName = Cloudify.generateAlias("max");
                 Column internalColumn = new Column();
-                internalColumn.columnName = leafFunction.outputName;
+                internalColumn.tableAlias = leafFunction.outputName;
                 internalFunction.params.add(internalColumn);
                 cloudQuery.internalQuery.outputFunctions.add(internalFunction);
 
                 OutputFunction rootFunction = new OutputFunction();
                 rootFunction.functionName = "max";
                 Column rootColumn = new Column();
-                rootColumn.columnName = internalFunction.outputName;
+                rootColumn.tableAlias = internalFunction.outputName;
                 rootFunction.params.add(rootColumn);
                 cloudQuery.rootQuery.outputFunctions.add(rootFunction);
             }
