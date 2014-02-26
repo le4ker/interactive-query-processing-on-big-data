@@ -136,7 +136,48 @@ public class Cloudify {
                 cloudQuery.rootQuery.outputFunctions.add(rootFunction);
             }
             else if (aggregationFunction.functionName.compareTo("avg") == 0) {
-                // TODO
+
+                /* avg(x) = sum(x) / count(x) */
+
+                OutputFunction sumLeafFunction = new OutputFunction();
+                sumLeafFunction.functionName = "sum";
+                sumLeafFunction.params.addAll(aggregationFunction.params);
+                sumLeafFunction.outputName = Cloudify.generateAlias("sum");
+                cloudQuery.leafQuery.outputFunctions.add(sumLeafFunction);
+
+                OutputFunction countLeafFunction = new OutputFunction();
+                countLeafFunction.functionName = "count";
+                countLeafFunction.params.addAll(aggregationFunction.params);
+                countLeafFunction.outputName = Cloudify.generateAlias("count");
+                cloudQuery.leafQuery.outputFunctions.add(countLeafFunction);
+
+                OutputFunction sumInternalFunction = new OutputFunction();
+                sumInternalFunction.functionName = "sum";
+                Column sumInternalColumn = new Column();
+                sumInternalColumn.tableAlias = sumLeafFunction.outputName;
+                sumInternalFunction.outputName = Cloudify.generateAlias("sum");
+                sumInternalFunction.params.add(sumInternalColumn);
+
+                OutputFunction countInternalFunction = new OutputFunction();
+                countInternalFunction.functionName = "count";
+                Column countInternalColumn = new Column();
+                countInternalColumn.tableAlias = countLeafFunction.outputName;
+                countInternalFunction.outputName = Cloudify.generateAlias("count");
+                countInternalFunction.params.add(countInternalColumn);
+
+                OutputFunction sumRootFunction = new OutputFunction();
+                sumRootFunction.functionName = "sum";
+                Column sumRootColumn = new Column();
+                sumRootColumn.tableAlias = sumInternalFunction.outputName;
+                sumRootFunction.params.add(sumRootColumn);
+
+                OutputFunction countRootFunction = new OutputFunction();
+                countRootFunction.functionName = "count";
+                Column countRootColumn = new Column();
+                countRootColumn.tableAlias = countInternalFunction.outputName;
+                countRootFunction.params.add(countRootColumn);
+
+                // TODO divide sum with cont in root level
             }
         }
 
