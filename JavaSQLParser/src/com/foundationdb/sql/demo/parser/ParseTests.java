@@ -1,11 +1,8 @@
-package test;
+package com.foundationdb.sql.demo.parser;
 
 import com.foundationdb.sql.parser.SQLParserException;
 import com.foundationdb.sql.query.SQLQuery;
 import com.foundationdb.sql.query.SQLQueryParser;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 /**
  * Created by panossakkos on 2/15/14.
@@ -17,13 +14,10 @@ public class ParseTests {
 
     public static boolean query1 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
-
             SQLQuery query = SQLQueryParser.parse(
                     " select l.l_returnflag, l.l_linestatus, " +
                     " avg(l.l_discount) as avg_disc, " +
-                    " count(l.l_linestatus) as count_order " + // TODO count (*)
+                    " count(l.l_orderkey) as count_order " +
                     " from lineitem l" +
                     " where l.l_shipdate <= '1998-12-01' " +
                     " group by l.l_returnflag, l.l_linestatus " +
@@ -44,15 +38,12 @@ public class ParseTests {
 
     public static boolean query2 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
-
             SQLQuery query = SQLQueryParser.parse(
-                    "select l.l_orderkey," +
-                    " sum(l.l_extendedprice) as revenue, " + // TODO support column operators
+                    " select l.l_orderkey, l.l_discount, " +
+                    " sum(l.l_extendedprice) as revenue, " +
                     " o.o_orderdate, " +
                     " o.o_shippriority " +
-                    " from customer_load c, orders_load o, lineitem_load l " +
+                    " from customer c, orders o, lineitem l " +
                     " where " +
                     "    c.c_custkey = o.o_custkey and " +
                     "    l.l_orderkey = o.o_orderkey and  " +
@@ -78,12 +69,10 @@ public class ParseTests {
 
     public static boolean query3 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
-                    " select  o.o_orderpriority, " +
-                    " count(*) as order_count " + // TODO count (*) or count a not-null column
+                    " select o.o_orderpriority, " +
+                    " count(o.o_orderkey) as order_count " +
                     " from orders o " +
                     " where " +
                     " o.o_orderdate >= '1993-03-01' " +
@@ -113,14 +102,12 @@ public class ParseTests {
 
     public static boolean query4 () throws Exception{
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
-                    "select " +
-                    " n_name, " +
-                    " sum(l_extendedprice * (1 - l_discount)) as revenue " + // TODO support column operations in aggregation functions
-                    "from customer c, orders o, lineitem l, supplier s, nation n, region r " +
+                    "select l.l_discount," +
+                    " n.n_name, " +
+                    " sum(l.l_extendedprice) as revenue " +
+                    " from customer c, orders o, lineitem l, supplier s, nation n, region r " +
                     " where " +
                     "     c.c_custkey = o.o_custkey " +
                     "     and l.l_orderkey = o.o_orderkey " +
@@ -149,8 +136,6 @@ public class ParseTests {
 
     public static boolean query5 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
                 " select " +
@@ -163,7 +148,7 @@ public class ParseTests {
                 "    select " +
                 "      n1.n_name as supp_nation, " +
                 "      n2.n_name as cust_nation, " +
-                "      strftime('%Y', l.l_shipdate) as l_year, " + // TODO CharConstantNode cannot be cast to com.foundationdb.sql.parser.ColumnReference
+                "      l.l_shipdate as l_year, " +
                 "      l.l_extendedprice * (1 - l.l_discount) as volume " +
                 "    from supplier s, lineitem l, orders o, customer c, nation n1, nation n2 " +
                 "    where " +
@@ -195,8 +180,6 @@ public class ParseTests {
 
     public static boolean query6 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
                 " select " +
@@ -206,9 +189,9 @@ public class ParseTests {
                 " from " +
                 "  ( " +
                 "    select" +
-                "      n_name as nation," +
-                "      strftime('%Y', o_orderdate) as o_year," + // TODO CharConstantNode cannot be cast to com.foundationdb.sql.parser.ColumnReference
-                "      l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount " +
+                "      n.n_name as nation," +
+                "      o.o_orderdate as o_year," +
+                "      l.l_extendedprice * (1 - l.l_discount) - ps.ps_supplycost * l.l_quantity as amount " +
                 "    from part p, supplier s, lineitem l, partsupp ps, orders o, nation n" +
                 "    where " +
                 "              s.s_suppkey = l.l_suppkey " +
@@ -241,8 +224,6 @@ public class ParseTests {
 
     public static boolean query7 () throws Exception {
         try {
-            BasicConfigurator.configure();
-            Logger.getRootLogger().setLevel(Level.OFF);
 
             SQLQuery query = SQLQueryParser.parse(
                 " select " +
@@ -254,7 +235,7 @@ public class ParseTests {
                         " from " +
                         "  (" +
                         "    select " +
-                        "      strftime('%Y', o_orderdate) as o_year, " + // TODO CharConstantNode cannot be cast to com.foundationdb.sql.parser.ColumnReference
+                        "      o.o_orderdate o_year, " +
                         "      l.l_extendedprice * (1 - l.l_discount) as volume, " +
                         "      n2.n_name as nation " +
                         "    from part p, supplier s, lineitem l, orders o, customer c, nation n1, nation n2, region r" +

@@ -15,11 +15,11 @@ public class SQLQueryParser {
 
   public static SQLQuery parse(String queryString) throws Exception {
     SQLParser parser = new SQLParser();
-    StatementNode node = parser.parseStatement(queryString);
+    StatementNode root = parser.parseStatement(queryString);
     // Traverse the query tree
     SQLQuery query = new SQLQuery();
     SQLQueryVisitor visitor = new SQLQueryVisitor(query);
-    node.accept(visitor);
+    root.accept(visitor);
     return query;
   }
 }
