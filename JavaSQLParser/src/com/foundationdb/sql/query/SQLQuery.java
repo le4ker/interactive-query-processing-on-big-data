@@ -27,7 +27,7 @@ public class SQLQuery {
         StringBuilder output = new StringBuilder();
 
         if (outputColumns.size() == 0 && outputFunctions.size() == 0) {
-            output.append(" SELECT * ");
+            output.append("SELECT * ");
         }
         else {
             output.append("SELECT ");
@@ -66,11 +66,15 @@ public class SQLQuery {
                 else {
                     output.append(" " + t.toString());
                 }
+                moreThanOne = true;
             }
         }
 
         if (filters.size() > 0 || joins.size() > 0) {
             output.append(" WHERE ");
+
+            // TODO
+
             for (Filter f : filters) {
                 output.append(" " + f.toString());
             }
@@ -82,15 +86,33 @@ public class SQLQuery {
 
         if (groupBy.size() > 0) {
             output.append(" GROUP BY ");
+
+            boolean moreThanOne = false;
+
             for (Column c : groupBy) {
-                output.append(" " + c.toString());
+                if (moreThanOne) {
+                    output.append(", " + c.toString());
+                }
+                else {
+                    output.append(" " + c.toString());
+                }
+                moreThanOne = true;
             }
         }
 
         if (orderBy.size() > 0) {
             output.append(" ORDER BY ");
+
+            boolean moreThanOne = false;
+
             for (Column c : orderBy) {
-                output.append(" " + c.toString());
+                if (moreThanOne) {
+                    output.append(", " + c.toString());
+                }
+                else {
+                    output.append(" " + c.toString());
+                }
+                moreThanOne = true;
             }
         }
 
