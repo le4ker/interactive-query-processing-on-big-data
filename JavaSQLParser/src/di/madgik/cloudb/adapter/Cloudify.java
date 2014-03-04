@@ -157,27 +157,29 @@ public class Cloudify {
                 sumInternalColumn.tableAlias = sumLeafFunction.outputName;
                 sumInternalFunction.outputName = Cloudify.generateAlias("sum");
                 sumInternalFunction.params.add(sumInternalColumn);
+                cloudQuery.internalQuery.outputFunctions.add(sumInternalFunction);
 
                 OutputFunction countInternalFunction = new OutputFunction();
-                countInternalFunction.functionName = "count";
+                countInternalFunction.functionName = "sum";
                 Column countInternalColumn = new Column();
                 countInternalColumn.tableAlias = countLeafFunction.outputName;
                 countInternalFunction.outputName = Cloudify.generateAlias("count");
                 countInternalFunction.params.add(countInternalColumn);
+                cloudQuery.internalQuery.outputFunctions.add(countInternalFunction);
 
                 OutputFunction sumRootFunction = new OutputFunction();
                 sumRootFunction.functionName = "sum";
                 Column sumRootColumn = new Column();
                 sumRootColumn.tableAlias = sumInternalFunction.outputName;
                 sumRootFunction.params.add(sumRootColumn);
+                cloudQuery.rootQuery.outputFunctions.add(sumRootFunction);
 
                 OutputFunction countRootFunction = new OutputFunction();
-                countRootFunction.functionName = "count";
+                countRootFunction.functionName = "sum";
                 Column countRootColumn = new Column();
                 countRootColumn.tableAlias = countInternalFunction.outputName;
                 countRootFunction.params.add(countRootColumn);
-
-                // TODO divide sum with cont in root level
+                cloudQuery.rootQuery.outputFunctions.add(countRootFunction);
             }
         }
 
