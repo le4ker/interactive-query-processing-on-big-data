@@ -26,7 +26,7 @@ public class ParseTests {
 
             System.out.println(query.toString());
         }
-        catch (ClassCastException|SQLParserException exception) {
+        catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
 
@@ -57,7 +57,7 @@ public class ParseTests {
 
             System.out.println(query.toString());
         }
-        catch (ClassCastException|SQLParserException exception) {
+        catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
 
@@ -90,7 +90,7 @@ public class ParseTests {
 
             System.out.println(query.toString());
         }
-        catch (ClassCastException|SQLParserException exception) {
+        catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
 
@@ -124,7 +124,7 @@ public class ParseTests {
 
             System.out.println(query.toString());
         }
-        catch (ClassCastException|SQLParserException exception) {
+        catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
 
@@ -168,7 +168,7 @@ public class ParseTests {
 
             System.out.println(query.toString());
         }
-        catch (ClassCastException|SQLParserException exception) {
+        catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
 
@@ -212,7 +212,7 @@ public class ParseTests {
 
             System.out.println(query.toString());
         }
-        catch (ClassCastException|SQLParserException exception) {
+        catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
 
@@ -258,7 +258,7 @@ public class ParseTests {
 
             System.out.println(query.toString());
         }
-        catch (ClassCastException|SQLParserException exception) {
+        catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
 

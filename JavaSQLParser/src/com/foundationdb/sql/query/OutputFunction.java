@@ -15,8 +15,19 @@ public class OutputFunction {
   public List<Column> params = new ArrayList<Column>();
   public String outputName;
 
-  @Override
-  public String toString() {
-    return functionName + "(" + params.toString() + ") as " + outputName;
-  }
+    @Override
+    public String toString() {
+        String parameters = "";
+
+        for (Column parameter : this.params) {
+            parameters += " " + parameter.toString();
+        }
+
+        if (outputName != null) {
+            return functionName + "(" + parameters + ") as " + outputName;
+        }
+        else {
+            return functionName + "(" + parameters + ")";
+        }
+    }
 }
