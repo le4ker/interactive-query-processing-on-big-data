@@ -14,8 +14,23 @@ public class CloudQuery {
     public InternalQuery internalQuery = new InternalQuery();
     public LeafQuery leafQuery = new LeafQuery();
 
-    public CloudQuery(SQLQuery sqlQuery) {
+    public CloudQuery(SQLQuery sqlQuery) {  
         this.sqlQuery = sqlQuery;
+    }
+
+    public String toSQLString() {
+        StringBuilder output = new StringBuilder();
+
+        output.append("SQL query:\n\t");
+        output.append(this.sqlQuery.toSQLString());
+        output.append("\nRoot query:\n\t");
+        output.append(this.rootQuery.toSQLString());
+        output.append("\nInternal query:\n\t");
+        output.append(this.internalQuery.toSQLString());
+        output.append("\nLeaf query:\n\t");
+        output.append(this.leafQuery.toSQLString());
+
+        return output.toString();
     }
 
     @Override
