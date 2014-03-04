@@ -1,0 +1,3 @@
+select min(l.orderkey)
+from lineitem l
+where l.orderkey > 100
