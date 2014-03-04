@@ -7,6 +7,7 @@ import di.madgik.cloudb.adapter.Cloudify;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -24,17 +25,43 @@ public class Application {
 
         System.out.print("> ");
         while ((command = scanner.nextLine()) != null) {
+
             String queries[] = command.split(" ");
 
-            for (String query : queries) {
+            if (queries[0].compareTo("q") == 0) {
+                return;
+            }
+            else if (queries[0].compareTo("new") == 0) {
 
-                if (query.compareTo("q") == 0) {
-                    return;
+                /* Example: new avg sum count */
+
+                if (queries.length < 3) {
+
+                    System.err.println("New rules must follow the format: new <function name> <primitive 1> <primitive 2> ...");
+                    continue;
                 }
 
-                cloudifyQueryFromFile(query);
-            }
+                String newAggregationFunction = queries[1];
+                ArrayList<String> primitives = new ArrayList<String>();
 
+                for (int i = 2; i < queries.length; i++) {
+                    primitives.add(queries[i]);
+                }
+
+                try {
+                    Cloudify.addRule(newAggregationFunction, primitives);
+                }
+                catch (Exception exception) {
+                    System.err.println(exception.getMessage());
+                }
+
+                continue;
+            }
+            else {
+                for (String query : queries) {
+                    cloudifyQueryFromFile(query);
+                }
+            }
             System.out.print("> ");
         }
     }
