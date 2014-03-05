@@ -73,14 +73,30 @@ public class SQLQuery {
         if (filters.size() > 0 || joins.size() > 0) {
             output.append(" WHERE ");
 
-            // TODO
+
+            boolean moreThanOne = false;
 
             for (Filter f : filters) {
-                output.append(" " + f.toString());
+                if (moreThanOne) {
+                    output.append(" AND " + f.toString());
+                }
+                else {
+                    output.append(" " + f.toString());
+                }
+
+                moreThanOne = true;
             }
 
             for (Join j : joins) {
-                output.append(" " + j.toString());
+
+                if (moreThanOne) {
+                    output.append(" AND " + j.toString());
+                }
+                else {
+                    output.append(" " + j.toString());
+                }
+
+                moreThanOne = true;
             }
         }
 

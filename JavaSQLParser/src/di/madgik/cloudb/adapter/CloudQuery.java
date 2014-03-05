@@ -14,7 +14,7 @@ public class CloudQuery {
     public InternalQuery internalQuery = new InternalQuery();
     public LeafQuery leafQuery = new LeafQuery();
 
-    public CloudQuery(SQLQuery sqlQuery) {  
+    public CloudQuery(SQLQuery sqlQuery) {
         this.sqlQuery = sqlQuery;
     }
 
