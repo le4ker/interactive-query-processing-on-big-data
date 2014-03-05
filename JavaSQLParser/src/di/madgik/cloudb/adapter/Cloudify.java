@@ -1,9 +1,6 @@
 package di.madgik.cloudb.adapter;
 
-import com.foundationdb.sql.query.Column;
-import com.foundationdb.sql.query.OutputFunction;
-import com.foundationdb.sql.query.SQLQuery;
-import com.foundationdb.sql.query.Table;
+import com.foundationdb.sql.query.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +26,16 @@ public class Cloudify {
         Cloudify.cloudifyGroupBy(cloudQuery);
         Cloudify.cloudifyOrderBy(cloudQuery);
         Cloudify.cloudifyLimit(cloudQuery);
-        
+
+        try {
+            SQLQueryParser.parse(cloudQuery.rootQuery.toSQLString());
+            SQLQueryParser.parse(cloudQuery.internalQuery.toSQLString());
+            SQLQueryParser.parse(cloudQuery.leafQuery.toSQLString());
+        }
+        catch (Exception exception) {
+            System.err.println(exception.getMessage());
+        }
+
         return cloudQuery;
     }
 

@@ -74,7 +74,7 @@ public class Application {
 
             CloudQuery cloudQuery = Cloudify.toCloud(query);
 
-            System.out.println(cloudQuery);
+            System.out.println(cloudQuery.toSQLString());
 
         }
         catch(Exception exception) {

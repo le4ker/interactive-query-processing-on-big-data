@@ -9,11 +9,16 @@ package com.foundationdb.sql.query;
  */
 public class Column {
 
-  public String tableAlias = null;
-  public String columnName = null;
+    public String tableAlias = null;
+    public String columnName = null;
 
-  @Override
-  public String toString() {
-    return tableAlias + "." + columnName;
-  }
+    @Override
+    public String toString() {
+        if(columnName != null) {
+            return tableAlias + "." + columnName;
+        }
+        else {
+            return tableAlias;
+        }
+    }
 }
