@@ -1,12 +1,9 @@
-package di.madgik.cloudb.adapter.demo;
+package di.madgik.cloudb.adapter;
 
 import com.foundationdb.sql.query.SQLQuery;
 import com.foundationdb.sql.query.SQLQueryParser;
-import di.madgik.cloudb.adapter.CloudQuery;
-import di.madgik.cloudb.adapter.Cloudify;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -14,7 +11,7 @@ import java.util.Scanner;
  * Created by panossakkos on 2/21/14.
  */
 
-public class Application {
+public class Shell {
 
     private static String QUERIES_FOLDER = "Queries/";
 
@@ -68,7 +65,7 @@ public class Application {
 
     private static void cloudifyQueryFromFile(String fileName) {
         try {
-            String content = new Scanner(new File(Application.QUERIES_FOLDER + fileName)).useDelimiter("\\Z").next();
+            String content = new Scanner(new File(Shell.QUERIES_FOLDER + fileName)).useDelimiter("\\Z").next();
 
             SQLQuery query = SQLQueryParser.parse(content);
 
