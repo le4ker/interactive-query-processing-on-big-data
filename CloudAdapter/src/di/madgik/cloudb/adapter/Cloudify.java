@@ -14,7 +14,7 @@ public class Cloudify {
 
     private static HashMap<String, ArrayList<String>> rules = new HashMap<String, ArrayList<String>>();
 
-    public static CloudQuery toCloud(SQLQuery query) {
+    public static CloudQuery toCloud(SQLQuery query) throws Exception {
         CloudQuery cloudQuery = new CloudQuery(query);
 
         cloudQuery.leafQuery.outputColumns = cloudQuery.sqlQuery.outputColumns;
@@ -174,7 +174,7 @@ public class Cloudify {
         cloudQuery.rootQuery.outputFunctions.add(rootFunction);
     }
 
-    private static void cloudifyOutputFunctions(CloudQuery cloudQuery) {
+    private static void cloudifyOutputFunctions(CloudQuery cloudQuery) throws Exception {
 
         for (OutputFunction aggregationFunction : cloudQuery.sqlQuery.outputFunctions) {
 
@@ -186,6 +186,9 @@ public class Cloudify {
                 for (String primitive : Cloudify.rules.get(aggregationFunction.functionName)) {
                     Cloudify.addPrimitive(cloudQuery, primitive, aggregationFunction.params);
                 }
+            }
+            else {
+                throw new Exception (aggregationFunction.functionName + " is not a primitive, nor a known complex function");
             }
         }
 

@@ -15,7 +15,7 @@ public class Shell {
 
     private static String QUERIES_FOLDER = "Queries/";
 
-    public static void main (String []args) throws Exception {
+    public static void main (String []args) {
 
         String command;
         Scanner scanner = new Scanner(System.in);
