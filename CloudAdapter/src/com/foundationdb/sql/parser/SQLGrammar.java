@@ -292,8 +292,8 @@ class SQLGrammar implements SQLGrammarConstants {
                             cp = (cp << 4) | d;
                         }
                         if (Character.charCount(cp) == 2) {
-                            result.append(Character.highSurrogate(cp));
-                            result.append(Character.lowSurrogate(cp));
+                            result.append(Character.isHighSurrogate((char)cp));
+                            result.append(Character.isLowSurrogate((char)cp));
                         }
                         else {
                             result.append((char)cp);
