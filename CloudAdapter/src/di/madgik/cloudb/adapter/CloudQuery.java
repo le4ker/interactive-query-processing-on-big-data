@@ -39,7 +39,6 @@ public class CloudQuery {
                 i++;
             }
         }
-
     }
 
     public String toShellSQLString() {
