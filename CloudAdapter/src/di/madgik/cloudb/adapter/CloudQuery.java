@@ -1,6 +1,7 @@
 package di.madgik.cloudb.adapter;
 
 import com.foundationdb.sql.query.SQLQuery;
+import com.foundationdb.sql.query.Table;
 
 /**
  * Created by panossakkos on 2/21/14.
@@ -16,6 +17,29 @@ public class CloudQuery {
 
     public CloudQuery(SQLQuery sqlQuery) {
         this.sqlQuery = sqlQuery;
+        this.removeDublicateTables();
+    }
+
+    private void removeDublicateTables() {
+        for (int i = 0; i < this.sqlQuery.inputTables.size();) {
+            Table table = this.sqlQuery.inputTables.get(i);
+
+            this.sqlQuery.inputTables.remove(i);
+            boolean dublicate = false;
+
+            for (int j = 0; j < this.sqlQuery.inputTables.size(); j++) {
+                if (this.sqlQuery.inputTables.get(j).name.equals(table.name)) {
+                    dublicate = true;
+                    break;
+                }
+            }
+
+            if (dublicate == false) {
+                this.sqlQuery.inputTables.add(table);
+                i++;
+            }
+        }
+
     }
 
     public String toShellSQLString() {
