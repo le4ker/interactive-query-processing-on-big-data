@@ -71,7 +71,7 @@ public class Shell {
 
             CloudQuery cloudQuery = Cloudify.toCloud(query);
 
-            System.out.println(cloudQuery.toSQLString());
+            System.out.println(cloudQuery.toShellSQLString());
 
         }
         catch(Exception exception) {

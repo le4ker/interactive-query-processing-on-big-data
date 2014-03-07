@@ -18,7 +18,7 @@ public class CloudQuery {
         this.sqlQuery = sqlQuery;
     }
 
-    public String toSQLString() {
+    public String toShellSQLString() {
         StringBuilder output = new StringBuilder();
 
         output.append("SQL query:\n\t");
@@ -29,6 +29,16 @@ public class CloudQuery {
         output.append(this.internalQuery.toSQLString());
         output.append("\nLeaf query:\n\t");
         output.append(this.leafQuery.toSQLString());
+
+        return output.toString();
+    }
+
+    public String toSQLString() {
+        StringBuilder output = new StringBuilder();
+
+        output.append(this.rootQuery.toSQLString().
+                replace("Internal internal", "\n(" + this.internalQuery.toSQLString().
+                replace("Leaf leaf", "\n(" + this.leafQuery.toSQLString() + ")") + ")"));
 
         return output.toString();
     }

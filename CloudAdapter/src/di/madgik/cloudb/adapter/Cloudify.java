@@ -28,6 +28,7 @@ public class Cloudify {
         Cloudify.cloudifyLimit(cloudQuery);
 
         try {
+            SQLQueryParser.parse(cloudQuery.sqlQuery.toSQLString());
             SQLQueryParser.parse(cloudQuery.rootQuery.toSQLString());
             SQLQueryParser.parse(cloudQuery.internalQuery.toSQLString());
             SQLQueryParser.parse(cloudQuery.leafQuery.toSQLString());
@@ -78,11 +79,11 @@ public class Cloudify {
     }
 
 
-    private static void cloudifyPrimitiveSum(CloudQuery cloudQuery, List<Column> parameters) {
+    private static void cloudifyPrimitiveSum(CloudQuery cloudQuery, OutputFunction function) {
         OutputFunction leafFunction = new OutputFunction();
         leafFunction.functionName = "sum";
         leafFunction.outputName = Cloudify.generateAlias("sum");
-        leafFunction.params.addAll(parameters);
+        leafFunction.params.addAll(function.params);
         cloudQuery.leafQuery.outputFunctions.add(leafFunction);
 
         OutputFunction internalFunction = new OutputFunction();
@@ -97,16 +98,25 @@ public class Cloudify {
         rootFunction.functionName = "sum";
         Column rootColumn = new Column();
         rootColumn.tableAlias = internalFunction.outputName;
-        rootFunction.outputName = Cloudify.generateAlias("sum");
+
+        /* Keep the output name, if it exists */
+
+        if (function.outputName == null) {
+            rootFunction.outputName = Cloudify.generateAlias("sum");
+        }
+        else {
+            rootFunction.outputName = function.outputName;
+        }
+
         rootFunction.params.add(rootColumn);
         cloudQuery.rootQuery.outputFunctions.add(rootFunction);
     }
 
-    private static void cloudifyPrimitiveCount(CloudQuery cloudQuery, List<Column> parameters) {
+    private static void cloudifyPrimitiveCount(CloudQuery cloudQuery, OutputFunction function) {
         OutputFunction leafFunction = new OutputFunction();
         leafFunction.functionName = "count";
         leafFunction.outputName = Cloudify.generateAlias("count");
-        leafFunction.params.addAll(parameters);
+        leafFunction.params.addAll(function.params);
         cloudQuery.leafQuery.outputFunctions.add(leafFunction);
 
         OutputFunction internalFunction = new OutputFunction();
@@ -121,16 +131,25 @@ public class Cloudify {
         rootFunction.functionName = "sum";
         Column rootColumn = new Column();
         rootColumn.tableAlias = internalFunction.outputName;
-        rootFunction.outputName = Cloudify.generateAlias("count");
+
+        /* Keep the output name, if it exists */
+
+        if (function.outputName == null) {
+            rootFunction.outputName = Cloudify.generateAlias("count");
+        }
+        else {
+            rootFunction.outputName = function.outputName;
+        }
+
         rootFunction.params.add(rootColumn);
         cloudQuery.rootQuery.outputFunctions.add(rootFunction);
     }
 
-    private static void cloudifyPrimitiveMin(CloudQuery cloudQuery, List<Column> parameters) {
+    private static void cloudifyPrimitiveMin(CloudQuery cloudQuery, OutputFunction function) {
         OutputFunction leafFunction = new OutputFunction();
         leafFunction.functionName = "min";
         leafFunction.outputName = Cloudify.generateAlias("min");
-        leafFunction.params.addAll(parameters);
+        leafFunction.params.addAll(function.params);
         cloudQuery.leafQuery.outputFunctions.add(leafFunction);
 
         OutputFunction internalFunction = new OutputFunction();
@@ -145,16 +164,25 @@ public class Cloudify {
         rootFunction.functionName = "min";
         Column rootColumn = new Column();
         rootColumn.tableAlias = internalFunction.outputName;
-        rootFunction.outputName = Cloudify.generateAlias("min");
+
+        /* Keep the output name, if it exists */
+
+        if (function.outputName == null) {
+            rootFunction.outputName = Cloudify.generateAlias("min");
+        }
+        else {
+            rootFunction.outputName = function.outputName;
+        }
+
         rootFunction.params.add(rootColumn);
         cloudQuery.rootQuery.outputFunctions.add(rootFunction);
     }
 
-    private static void cloudifyPrimitiveMax(CloudQuery cloudQuery, List<Column> parameters) {
+    private static void cloudifyPrimitiveMax(CloudQuery cloudQuery, OutputFunction function) {
         OutputFunction leafFunction = new OutputFunction();
         leafFunction.functionName = "max";
         leafFunction.outputName = Cloudify.generateAlias("max");
-        leafFunction.params.addAll(parameters);
+        leafFunction.params.addAll(function.params);
         cloudQuery.leafQuery.outputFunctions.add(leafFunction);
 
         OutputFunction internalFunction = new OutputFunction();
@@ -169,7 +197,16 @@ public class Cloudify {
         rootFunction.functionName = "max";
         Column rootColumn = new Column();
         rootColumn.tableAlias = internalFunction.outputName;
-        rootFunction.outputName = Cloudify.generateAlias("max");
+
+        /* Keep the output name, if it exists */
+
+        if (function.outputName == null) {
+            rootFunction.outputName = Cloudify.generateAlias("max");
+        }
+        else {
+            rootFunction.outputName = function.outputName;
+        }
+
         rootFunction.params.add(rootColumn);
         cloudQuery.rootQuery.outputFunctions.add(rootFunction);
     }
@@ -179,12 +216,16 @@ public class Cloudify {
         for (OutputFunction aggregationFunction : cloudQuery.sqlQuery.outputFunctions) {
 
             if (Cloudify.isPrimitive(aggregationFunction.functionName)) {
-                Cloudify.addPrimitive(cloudQuery, aggregationFunction.functionName, aggregationFunction.params);
+                Cloudify.addPrimitive(cloudQuery, aggregationFunction);
             }
             else if (Cloudify.rules.keySet().contains(aggregationFunction.functionName)) {
 
                 for (String primitive : Cloudify.rules.get(aggregationFunction.functionName)) {
-                    Cloudify.addPrimitive(cloudQuery, primitive, aggregationFunction.params);
+                    OutputFunction primitiveFunction = new OutputFunction();
+                    primitiveFunction.functionName = primitive;
+                    primitiveFunction.params.addAll(aggregationFunction.params);
+                    primitiveFunction.outputName = aggregationFunction.outputName;
+                    Cloudify.addPrimitive(cloudQuery, primitiveFunction);
                 }
             }
             else {
@@ -195,18 +236,18 @@ public class Cloudify {
         Cloudify.aliases.clear();
     }
 
-    private static void addPrimitive(CloudQuery cloudQuery, String function, List<Column> parameters) {
-        if (function.compareTo("count") == 0) {
-            Cloudify.cloudifyPrimitiveCount(cloudQuery, parameters);
+    private static void addPrimitive(CloudQuery cloudQuery, OutputFunction function) {
+        if (function.functionName.compareTo("count") == 0) {
+            Cloudify.cloudifyPrimitiveCount(cloudQuery, function);
         }
-        else if (function.compareTo("sum") == 0) {
-            Cloudify.cloudifyPrimitiveSum(cloudQuery, parameters);
+        else if (function.functionName.compareTo("sum") == 0) {
+            Cloudify.cloudifyPrimitiveSum(cloudQuery, function);
         }
-        else if (function.compareTo("min") == 0) {
-            Cloudify.cloudifyPrimitiveMin(cloudQuery, parameters);
+        else if (function.functionName.compareTo("min") == 0) {
+            Cloudify.cloudifyPrimitiveMin(cloudQuery, function);
         }
-        else if (function.compareTo("max") == 0) {
-            Cloudify.cloudifyPrimitiveMax(cloudQuery, parameters);
+        else if (function.functionName.compareTo("max") == 0) {
+            Cloudify.cloudifyPrimitiveMax(cloudQuery, function);
         }
     }
 
