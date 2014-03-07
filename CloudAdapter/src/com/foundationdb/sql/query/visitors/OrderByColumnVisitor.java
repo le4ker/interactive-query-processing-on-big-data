@@ -16,22 +16,29 @@ import com.foundationdb.sql.query.SQLQuery;
  */
 public class OrderByColumnVisitor extends AbstractVisitor {
 
-  public OrderByColumnVisitor(SQLQuery query) {
-    super(query);
-  }
-
-  @Override
-  public Visitable visit(Visitable node) throws StandardException {
-    if (node instanceof OrderByColumn) {
-      Column column = new Column();
-
-      ColumnReference parserColumn = (ColumnReference)((OrderByColumn)node).getExpression();
-      column.tableAlias = parserColumn.getTableName();
-      column.columnName = parserColumn.getColumnName();
-
-      query.orderBy.add(column);
-      return node;
+    public OrderByColumnVisitor(SQLQuery query) {
+        super(query);
     }
-    return node;
-  }
+
+    @Override
+    public Visitable visit(Visitable node) throws StandardException {
+        if (node instanceof OrderByColumn) {
+            Column column = new Column();
+
+            ColumnReference parserColumn = (ColumnReference)((OrderByColumn)node).getExpression();
+
+            if (column.tableAlias == null ) {
+                column.tableAlias = parserColumn.getColumnName();
+            }
+            else {
+                column.tableAlias = parserColumn.getTableName();
+                column.columnName = parserColumn.getColumnName();
+            }
+
+            query.orderBy.add(column);
+            return node;
+        }
+
+        return node;
+    }
 }

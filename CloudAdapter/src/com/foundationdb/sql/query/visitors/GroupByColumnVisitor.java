@@ -20,18 +20,25 @@ public class GroupByColumnVisitor extends AbstractVisitor {
     super(query);
   }
 
-  @Override
-  public Visitable visit(Visitable node) throws StandardException {
-    if (node instanceof GroupByColumn) {
-      Column column = new Column();
+    @Override
+    public Visitable visit(Visitable node) throws StandardException {
+        if (node instanceof GroupByColumn) {
+            Column column = new Column();
 
-      ColumnReference parserColumn = (ColumnReference)((GroupByColumn)node).getColumnExpression();
-      column.tableAlias = parserColumn.getTableName();
-      column.columnName = parserColumn.getColumnName();
+            ColumnReference parserColumn = (ColumnReference)((GroupByColumn)node).getColumnExpression();
 
-      query.groupBy.add(column);
-      return node;
+            if (column.tableAlias == null ) {
+                column.tableAlias = parserColumn.getColumnName();
+            }
+            else {
+                column.tableAlias = parserColumn.getTableName();
+                column.columnName = parserColumn.getColumnName();
+            }
+
+            query.groupBy.add(column);
+
+            return node;
+        }
+        return node;
     }
-    return node;
-  }
 }
