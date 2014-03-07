@@ -14,11 +14,14 @@ public class Column {
 
     @Override
     public String toString() {
-        if(columnName != null) {
-            return tableAlias + "." + columnName;
+        if(this.tableAlias != null && this.columnName != null) {
+            return this.tableAlias + "." + columnName;
+        }
+        else if (this.tableAlias == null) {
+            return this.columnName;
         }
         else {
-            return tableAlias;
+            return this.tableAlias;
         }
     }
 }
