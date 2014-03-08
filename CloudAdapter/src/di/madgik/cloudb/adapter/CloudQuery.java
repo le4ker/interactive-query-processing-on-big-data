@@ -1,5 +1,6 @@
 package di.madgik.cloudb.adapter;
 
+import com.foundationdb.sql.query.OutputColumn;
 import com.foundationdb.sql.query.SQLQuery;
 import com.foundationdb.sql.query.Table;
 
@@ -57,6 +58,19 @@ public class CloudQuery {
     }
 
     public String toSQLString() {
+
+        this.rootQuery.outputColumns = this.internalQuery.outputColumns = this.leafQuery.outputColumns;
+        this.rootQuery.inputTables.addAll(0, this.leafQuery.inputTables);
+        this.internalQuery.inputTables.addAll(0, this.leafQuery.inputTables);
+
+        for (OutputColumn column : this.rootQuery.outputColumns) {
+            column.outputName = null;
+        }
+
+        for (OutputColumn column : this.internalQuery.outputColumns) {
+            column.outputName = null;
+        }
+
         StringBuilder output = new StringBuilder();
 
         output.append(this.rootQuery.toSQLString().
