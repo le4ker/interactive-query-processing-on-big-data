@@ -12,7 +12,7 @@ import com.foundationdb.sql.query.SQLQuery;
 
 /**
  *
- * @author heraldkllapi
+ * @author heraldkllapi, panossakkos
  */
 public class GroupByColumnVisitor extends AbstractVisitor {
 

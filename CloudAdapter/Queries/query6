@@ -10,7 +10,7 @@
        l.l_extendedprice * (1 - l.l_discount) - ps.ps_supplycost * l.l_quantity as amount
      from part p, supplier s, lineitem l, partsupp ps, orders o, nation n
      where
-               s.s_suppkey = l.l_suppkey
+       s.s_suppkey = l.l_suppkey
        and ps.ps_suppkey = l.l_suppkey
        and ps.ps_partkey = l.l_partkey
        and p.p_partkey = l.l_partkey

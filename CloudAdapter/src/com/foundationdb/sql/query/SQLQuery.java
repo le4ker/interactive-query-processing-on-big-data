@@ -8,8 +8,9 @@ import java.util.List;
 
 /**
  *
- * @author heraldkllapi
+ * @author heraldkllapi, panossakkos
  */
+
 public class SQLQuery {
     public List<OutputColumn> outputColumns = new ArrayList<OutputColumn>();
     public List<OutputFunction> outputFunctions = new ArrayList<OutputFunction>();

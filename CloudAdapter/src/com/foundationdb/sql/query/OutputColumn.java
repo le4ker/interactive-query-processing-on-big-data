@@ -5,15 +5,20 @@ package com.foundationdb.sql.query;
 
 /**
  *
- * @author heraldkllapi
+ * @author heraldkllapi, panossakkos
  */
 public class OutputColumn {
 
   public Column column = new Column();
   public String outputName = null;
 
-  @Override
-  public String toString() {
-    return column.toString() + " as " + outputName;
-  }
+    @Override
+    public String toString() {
+        if (this.outputName == null) {
+            return column.toString();
+        }
+        else {
+            return column.toString() + " as " + outputName;
+        }
+    }
 }
