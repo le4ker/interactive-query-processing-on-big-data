@@ -75,7 +75,7 @@ public class CloudQuery {
 
         output.append(this.rootQuery.toSQLString().
                 replace("Internal internal", "\n(" + this.internalQuery.toSQLString().
-                replace("Leaf leaf", "\n(" + this.leafQuery.toSQLString() + ")") + ")"));
+                replace("Leaf leaf", "\n(" + this.leafQuery.toSQLString() + ") as leaf ") + ") as internal"));
 
         return output.toString();
     }
