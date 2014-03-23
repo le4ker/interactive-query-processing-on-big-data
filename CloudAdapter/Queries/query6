@@ -1,6 +1,6 @@
   select
-  nation,
-  o_year,
+  profit.nation,
+  profit.o_year,
   sum(amount) as sum_profit
   from
    (
