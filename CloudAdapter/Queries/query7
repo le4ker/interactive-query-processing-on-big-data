@@ -1,3 +1,6 @@
+This "case" clause looks strange! :-) Maybe ignore this query for now!
+
+
   select
    o_year,
    sum(case
