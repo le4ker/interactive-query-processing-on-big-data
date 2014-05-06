@@ -16,7 +16,10 @@ public class Column {
 
     public Column(Column column) {
         this.tableAlias = new String(column.tableAlias);
-        this.columnName = new String(column.columnName);
+
+        if (columnName != null) {
+            this.columnName = new String(column.columnName);
+        }
     }
 
     @Override

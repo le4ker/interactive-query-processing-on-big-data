@@ -21,10 +21,10 @@ public class Cloudify {
         cloudQuery.leafQuery.joins = cloudQuery.sqlQuery.joins;
         cloudQuery.leafQuery.filters = cloudQuery.sqlQuery.filters;
 
-        Cloudify.cloudifyOutputColumns(cloudQuery);
-        Cloudify.cloudifyOutputFunctions(cloudQuery);
         Cloudify.cloudifyGroupBy(cloudQuery);
         Cloudify.cloudifyOrderBy(cloudQuery);
+        Cloudify.cloudifyOutputColumns(cloudQuery);
+        Cloudify.cloudifyOutputFunctions(cloudQuery);
         Cloudify.cloudifyLimit(cloudQuery);
 
         try {
@@ -86,6 +86,8 @@ public class Cloudify {
         leafFunction.params.addAll(function.params);
         cloudQuery.leafQuery.outputFunctions.add(leafFunction);
 
+
+
         OutputFunction internalFunction = new OutputFunction();
         internalFunction.functionName = "sum";
         internalFunction.outputName = Cloudify.generateAlias("sum");
@@ -106,6 +108,13 @@ public class Cloudify {
         }
         else {
             rootFunction.outputName = function.outputName;
+
+            /* Rename it in group by and order by */
+
+            /* Replace outputName with temporary name */
+
+            Cloudify.renameFunctionNameInGroudByOrderBy(cloudQuery, function, leafFunction, internalFunction);
+
         }
 
         rootFunction.params.add(rootColumn);
@@ -139,6 +148,8 @@ public class Cloudify {
         }
         else {
             rootFunction.outputName = function.outputName;
+
+            Cloudify.renameFunctionNameInGroudByOrderBy(cloudQuery, function, leafFunction, internalFunction);
         }
 
         rootFunction.params.add(rootColumn);
@@ -172,6 +183,8 @@ public class Cloudify {
         }
         else {
             rootFunction.outputName = function.outputName;
+
+            Cloudify.renameFunctionNameInGroudByOrderBy(cloudQuery, function, leafFunction, internalFunction);
         }
 
         rootFunction.params.add(rootColumn);
@@ -205,10 +218,50 @@ public class Cloudify {
         }
         else {
             rootFunction.outputName = function.outputName;
+
+            Cloudify.renameFunctionNameInGroudByOrderBy(cloudQuery, function, leafFunction, internalFunction);
         }
 
         rootFunction.params.add(rootColumn);
         cloudQuery.rootQuery.outputFunctions.add(rootFunction);
+    }
+
+    private static void renameFunctionNameInGroudByOrderBy(CloudQuery cloudQuery, OutputFunction function, OutputFunction leafFunction, OutputFunction internalFunction) {
+        for (int i = 0; i < cloudQuery.leafQuery.orderBy.size(); i++) {
+            if (cloudQuery.leafQuery.orderBy.get(i).tableAlias.compareTo(function.outputName) == 0) {
+                Column newLeafColumn = new Column(cloudQuery.leafQuery.orderBy.get(i));
+                newLeafColumn.tableAlias = leafFunction.outputName;
+                newLeafColumn.columnName = null;
+                cloudQuery.leafQuery.orderBy.remove(i);
+                cloudQuery.leafQuery.orderBy.add(i, newLeafColumn);
+
+                Column newInternalColumn = new Column(cloudQuery.internalQuery.orderBy.get(i));
+                newInternalColumn.tableAlias = internalFunction.outputName;
+                newInternalColumn.columnName = null;
+                cloudQuery.internalQuery.orderBy.remove(i);
+                cloudQuery.internalQuery.orderBy.add(i, newInternalColumn);
+
+                break;
+            }
+        }
+
+        for (int i = 0; i < cloudQuery.leafQuery.groupBy.size(); i++) {
+            if (cloudQuery.leafQuery.groupBy.get(i).tableAlias.compareTo(function.outputName) == 0) {
+                Column newLeafColumn = new Column(cloudQuery.leafQuery.groupBy.get(i));
+                newLeafColumn.tableAlias = leafFunction.functionName;
+                newLeafColumn.columnName = null;
+                cloudQuery.leafQuery.groupBy.remove(i);
+                cloudQuery.leafQuery.groupBy.add(i, newLeafColumn);
+
+                Column newInternalColumn = new Column(cloudQuery.internalQuery.groupBy.get(i));
+                newInternalColumn.tableAlias = internalFunction.functionName;
+                newInternalColumn.columnName = null;
+                cloudQuery.internalQuery.groupBy.remove(i);
+                cloudQuery.internalQuery.groupBy.add(i, newInternalColumn);
+
+                break;
+            }
+        }
     }
 
     private static void cloudifyOutputFunctions(CloudQuery cloudQuery) throws Exception {
@@ -257,6 +310,7 @@ public class Cloudify {
         for (OutputColumn outputColumn : cloudQuery.sqlQuery.outputColumns) {
             OutputColumn internalOutputColumn = new OutputColumn(outputColumn);
             internalOutputColumn.outputName = outputColumn.column.columnName;
+            internalOutputColumn.column.columnName = outputColumn.outputName;
             internalOutputColumn.column.tableAlias = null;
             cloudQuery.internalQuery.outputColumns.add(internalOutputColumn);
         }
@@ -264,21 +318,26 @@ public class Cloudify {
         for (OutputColumn outputColumn : cloudQuery.sqlQuery.outputColumns) {
             OutputColumn rootOutputColumn = new OutputColumn(outputColumn);
             rootOutputColumn.outputName = outputColumn.column.columnName;
+            rootOutputColumn.column.columnName = outputColumn.outputName;
             rootOutputColumn.column.tableAlias = null;
             cloudQuery.rootQuery.outputColumns.add(rootOutputColumn);
         }
     }
 
     private static void cloudifyGroupBy(CloudQuery cloudQuery) {
-        cloudQuery.leafQuery.groupBy = cloudQuery.sqlQuery.groupBy;
-        cloudQuery.internalQuery.groupBy = cloudQuery.sqlQuery.groupBy;
-        cloudQuery.rootQuery.groupBy = cloudQuery.sqlQuery.groupBy;
+        for(Column column : cloudQuery.sqlQuery.groupBy) {
+            cloudQuery.leafQuery.groupBy.add(new Column(column));
+            cloudQuery.internalQuery.groupBy.add((new Column(column)));
+            cloudQuery.rootQuery.groupBy.add(new Column(column));
+        }
     }
 
     private static void cloudifyOrderBy(CloudQuery cloudQuery) {
-        cloudQuery.leafQuery.orderBy = cloudQuery.sqlQuery.orderBy;
-        cloudQuery.internalQuery.orderBy = cloudQuery.sqlQuery.orderBy;
-        cloudQuery.rootQuery.orderBy = cloudQuery.sqlQuery.orderBy;
+        for(Column column : cloudQuery.sqlQuery.orderBy) {
+            cloudQuery.leafQuery.orderBy.add(new Column(column));
+            cloudQuery.internalQuery.orderBy.add((new Column(column)));
+            cloudQuery.rootQuery.orderBy.add(new Column(column));
+        }
     }
 
     private static void cloudifyLimit(CloudQuery cloudQuery) {
