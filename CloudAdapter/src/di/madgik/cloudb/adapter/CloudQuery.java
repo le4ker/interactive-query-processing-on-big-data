@@ -86,10 +86,10 @@ public class CloudQuery {
         output.append("DISTRIBUTED CREATE TEMPORARY TABLE leaf as\n");
         output.append(this.leafQuery.toSQLString() + ";\n");
 
-        output.append("DISTRIBUTED CREATE TEMPORARY TABLE internal as\n");
+        output.append("\nDISTRIBUTED CREATE TEMPORARY TABLE internal as\n");
         output.append(this.internalQuery.toSQLString() + ";\n");
 
-        output.append("DISTRIBUTED CREATE TEMPORARY TABLE root to 1 as\n");
+        output.append("\nDISTRIBUTED CREATE TEMPORARY TABLE root to 1 as\n");
         output.append(this.rootQuery.toSQLString() + ";\n");
 
         return output.toString();
