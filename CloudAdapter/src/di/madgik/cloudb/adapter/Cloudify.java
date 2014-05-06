@@ -17,11 +17,11 @@ public class Cloudify {
     public static CloudQuery toCloud(SQLQuery query) throws Exception {
         CloudQuery cloudQuery = new CloudQuery(query);
 
-        cloudQuery.leafQuery.outputColumns = cloudQuery.sqlQuery.outputColumns;
         cloudQuery.leafQuery.inputTables = cloudQuery.sqlQuery.inputTables;
         cloudQuery.leafQuery.joins = cloudQuery.sqlQuery.joins;
         cloudQuery.leafQuery.filters = cloudQuery.sqlQuery.filters;
 
+        Cloudify.cloudifyOutputColumns(cloudQuery);
         Cloudify.cloudifyOutputFunctions(cloudQuery);
         Cloudify.cloudifyGroupBy(cloudQuery);
         Cloudify.cloudifyOrderBy(cloudQuery);
@@ -248,6 +248,24 @@ public class Cloudify {
         }
         else if (function.functionName.compareTo("max") == 0) {
             Cloudify.cloudifyPrimitiveMax(cloudQuery, function);
+        }
+    }
+
+    private static void cloudifyOutputColumns(CloudQuery cloudQuery) {
+        cloudQuery.leafQuery.outputColumns = cloudQuery.sqlQuery.outputColumns;
+
+        for (OutputColumn outputColumn : cloudQuery.sqlQuery.outputColumns) {
+            OutputColumn internalOutputColumn = new OutputColumn(outputColumn);
+            internalOutputColumn.outputName = outputColumn.column.columnName;
+            internalOutputColumn.column.tableAlias = null;
+            cloudQuery.internalQuery.outputColumns.add(internalOutputColumn);
+        }
+
+        for (OutputColumn outputColumn : cloudQuery.sqlQuery.outputColumns) {
+            OutputColumn rootOutputColumn = new OutputColumn(outputColumn);
+            rootOutputColumn.outputName = outputColumn.column.columnName;
+            rootOutputColumn.column.tableAlias = null;
+            cloudQuery.rootQuery.outputColumns.add(rootOutputColumn);
         }
     }
 

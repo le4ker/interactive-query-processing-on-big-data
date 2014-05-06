@@ -12,6 +12,13 @@ public class OutputColumn {
   public Column column = new Column();
   public String outputName = null;
 
+    public OutputColumn() {}
+
+    public OutputColumn(OutputColumn outputColumn) {
+        this.column = new Column(outputColumn.column);
+        this.outputName = new String(outputColumn.outputName);
+    }
+
     @Override
     public String toString() {
         if (this.outputName == null) {

@@ -17,6 +17,12 @@ public class Table {
   
   @Override
   public String toString() {
-    return name + " " + alias;
+
+    if (alias == null) {
+        return name;
+    }
+    else {
+        return name + " " + alias;
+    }
   }
 }

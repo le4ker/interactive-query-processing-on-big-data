@@ -12,6 +12,13 @@ public class Column {
     public String tableAlias = null;
     public String columnName = null;
 
+    public Column() { }
+
+    public Column(Column column) {
+        this.tableAlias = new String(column.tableAlias);
+        this.columnName = new String(column.columnName);
+    }
+
     @Override
     public String toString() {
         if(this.tableAlias != null && this.columnName != null) {

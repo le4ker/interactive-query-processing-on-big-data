@@ -80,6 +80,21 @@ public class CloudQuery {
         return output.toString();
     }
 
+    public String toAdpSqlString() {
+        StringBuilder output = new StringBuilder();
+
+        output.append("DISTRIBUTED CREATE TEMPORARY TABLE leaf as\n");
+        output.append(this.leafQuery.toSQLString() + ";\n");
+
+        output.append("DISTRIBUTED CREATE TEMPORARY TABLE internal as\n");
+        output.append(this.internalQuery.toSQLString() + ";\n");
+
+        output.append("DISTRIBUTED CREATE TEMPORARY TABLE root to 1 as\n");
+        output.append(this.rootQuery.toSQLString() + ";\n");
+
+        return output.toString();
+    }
+
     @Override
     public String toString () {
         StringBuilder output = new StringBuilder();
