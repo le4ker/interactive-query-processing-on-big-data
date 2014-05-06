@@ -309,15 +309,15 @@ public class Cloudify {
 
         for (OutputColumn outputColumn : cloudQuery.sqlQuery.outputColumns) {
             OutputColumn internalOutputColumn = new OutputColumn(outputColumn);
-            internalOutputColumn.outputName = outputColumn.column.columnName;
             internalOutputColumn.column.columnName = outputColumn.outputName;
+            internalOutputColumn.outputName = outputColumn.outputName;
             internalOutputColumn.column.tableAlias = null;
             cloudQuery.internalQuery.outputColumns.add(internalOutputColumn);
         }
 
         for (OutputColumn outputColumn : cloudQuery.sqlQuery.outputColumns) {
             OutputColumn rootOutputColumn = new OutputColumn(outputColumn);
-            rootOutputColumn.outputName = outputColumn.column.columnName;
+            rootOutputColumn.outputName = outputColumn.outputName;
             rootOutputColumn.column.columnName = outputColumn.outputName;
             rootOutputColumn.column.tableAlias = null;
             cloudQuery.rootQuery.outputColumns.add(rootOutputColumn);
