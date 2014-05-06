@@ -15,9 +15,11 @@ public class Column {
     public Column() { }
 
     public Column(Column column) {
-        this.tableAlias = new String(column.tableAlias);
+        if (column.tableAlias != null) {
+            this.tableAlias = new String(column.tableAlias);
+        }
 
-        if (columnName != null) {
+        if (column.columnName != null) {
             this.columnName = new String(column.columnName);
         }
     }
