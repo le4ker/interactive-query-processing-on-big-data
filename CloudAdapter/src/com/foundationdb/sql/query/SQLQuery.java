@@ -56,7 +56,7 @@ public class SQLQuery {
         }
 
         if (inputTables.size() > 0) {
-            output.append(" FROM ");
+            output.append("\nFROM ");
 
             boolean moreThanOne = false;
 
@@ -72,7 +72,7 @@ public class SQLQuery {
         }
 
         if (filters.size() > 0 || joins.size() > 0) {
-            output.append(" WHERE ");
+            output.append("\nWHERE ");
 
 
             boolean moreThanOne = false;
@@ -102,7 +102,7 @@ public class SQLQuery {
         }
 
         if (groupBy.size() > 0) {
-            output.append(" GROUP BY ");
+            output.append("\nGROUP BY ");
 
             boolean moreThanOne = false;
 
@@ -118,7 +118,7 @@ public class SQLQuery {
         }
 
         if (orderBy.size() > 0) {
-            output.append(" ORDER BY ");
+            output.append("\nORDER BY ");
 
             boolean moreThanOne = false;
 
@@ -134,7 +134,7 @@ public class SQLQuery {
         }
 
         if (limit != -1) {
-            output.append(" LIMIT ");
+            output.append("\nLIMIT ");
             output.append(" " + limit);
         }
 
