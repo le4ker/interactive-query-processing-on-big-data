@@ -61,13 +61,13 @@ public class CloudQuery {
     public String toAdpSqlString() {
         StringBuilder output = new StringBuilder();
 
-        output.append("DISTRIBUTED CREATE TEMPORARY TABLE leaf as\n");
+        output.append("DISTRIBUTED CREATE TEMPORARY TABLE leaf as direct\n");
         output.append(this.leafQuery.toSQLString() + ";\n");
 
-        output.append("\nDISTRIBUTED CREATE TEMPORARY TABLE internal as\n");
+        output.append("\nDISTRIBUTED CREATE TEMPORARY TABLE internal to 1 as tree\n");
         output.append(this.internalQuery.toSQLString() + ";\n");
 
-        output.append("\nDISTRIBUTED CREATE TEMPORARY TABLE root to 1 as\n");
+        output.append("\nDISTRIBUTED CREATE TEMPORARY TABLE root as\n");
         output.append(this.rootQuery.toSQLString() + ";\n");
 
         return output.toString();

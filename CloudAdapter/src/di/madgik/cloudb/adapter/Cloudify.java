@@ -3,6 +3,7 @@ package di.madgik.cloudb.adapter;
 import com.foundationdb.sql.query.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,6 +14,9 @@ import java.util.List;
 public class Cloudify {
 
     private static HashMap<String, ArrayList<String>> rules = new HashMap<String, ArrayList<String>>();
+
+    private static List<String> primitives = Arrays.asList("sum", "count", "min", "max");
+    private static List<String> metaPrimitives = new ArrayList<String>();
 
     public static CloudQuery toCloud(SQLQuery query) throws Exception {
         CloudQuery cloudQuery = new CloudQuery(query);
@@ -40,13 +44,12 @@ public class Cloudify {
         return cloudQuery;
     }
 
-    private static boolean isPrimitive(String primitive) {
-        if (primitive.compareTo("sum") != 0 && primitive.compareTo("count") != 0
-                && primitive.compareTo("min") != 0 && primitive.compareTo("max") != 0) {
-            return false;
-        }
+    private static boolean isPrimitive(String function) {
+        return Cloudify.primitives.contains(function);
+    }
 
-        return true;
+    private static boolean isMetaPrimitive(String function) {
+        return Cloudify.metaPrimitives.contains(function);
     }
 
     public static void addRule(String function, ArrayList<String> primitives) throws Exception {
@@ -56,12 +59,13 @@ public class Cloudify {
         }
 
         for (String primitive : primitives) {
-            if (Cloudify.isPrimitive(primitive) == false) {
-                throw new Exception(primitive + " is not a primitive");
+            if (!Cloudify.isPrimitive(primitive) && !Cloudify.isMetaPrimitive(primitive)) {
+                throw new Exception(primitive + " is not a primitive or meta-primitive");
             }
         }
 
         Cloudify.rules.put(function, primitives);
+        Cloudify.metaPrimitives.add(function);
     }
 
     private static HashMap<String, Integer> aliases = new HashMap<String, Integer>();
@@ -85,8 +89,6 @@ public class Cloudify {
         leafFunction.outputName = Cloudify.generateAlias("sum");
         leafFunction.params.addAll(function.params);
         cloudQuery.leafQuery.outputFunctions.add(leafFunction);
-
-
 
         OutputFunction internalFunction = new OutputFunction();
         internalFunction.functionName = "sum";
@@ -273,12 +275,27 @@ public class Cloudify {
             }
             else if (Cloudify.rules.keySet().contains(aggregationFunction.functionName)) {
 
-                for (String primitive : Cloudify.rules.get(aggregationFunction.functionName)) {
-                    OutputFunction primitiveFunction = new OutputFunction();
-                    primitiveFunction.functionName = primitive;
-                    primitiveFunction.params.addAll(aggregationFunction.params);
-                    primitiveFunction.outputName = aggregationFunction.outputName;
-                    Cloudify.addPrimitive(cloudQuery, primitiveFunction);
+                for (String composite : Cloudify.rules.get(aggregationFunction.functionName)) {
+
+                    if (Cloudify.isPrimitive(composite)) {
+                        OutputFunction primitiveFunction = new OutputFunction();
+                        primitiveFunction.functionName = composite;
+                        primitiveFunction.params.addAll(aggregationFunction.params);
+                        primitiveFunction.outputName = aggregationFunction.outputName;
+                        Cloudify.addPrimitive(cloudQuery, primitiveFunction);
+                    }
+                    else {
+                        for (String metaPrimitive : Cloudify.rules.get(composite)) {
+                            if (Cloudify.isPrimitive(metaPrimitive)) {
+                                OutputFunction metaPrimitiveFunction = new OutputFunction();
+                                metaPrimitiveFunction.functionName = metaPrimitive;
+                                metaPrimitiveFunction.params.addAll(aggregationFunction.params);
+                                metaPrimitiveFunction.outputName = aggregationFunction.outputName;
+                                Cloudify.addPrimitive(cloudQuery, metaPrimitiveFunction);
+                            }
+                            // else TODO: handle multiple layers of meta primitives...
+                        }
+                    }
                 }
             }
             else {
