@@ -14,6 +14,7 @@ public class OutputFunction {
   public String functionName;
   public List<Column> params = new ArrayList<Column>();
   public String outputName;
+  public float weight;
 
     @Override
     public String toString() {

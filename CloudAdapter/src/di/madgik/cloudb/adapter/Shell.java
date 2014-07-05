@@ -28,6 +28,9 @@ public class Shell {
             if (queries[0].compareTo("q") == 0) {
                 return;
             }
+            else if (queries[0].compareTo("newudf") == 0) {
+                Cloudify.addUDF(queries[1], Float.parseFloat(queries[2]));
+            }
             else if (queries[0].compareTo("new") == 0) {
 
                 /* Example: new avg sum count */
@@ -46,7 +49,7 @@ public class Shell {
                 }
 
                 try {
-                    Cloudify.addRule(newAggregationFunction, primitives);
+                    Cloudify.addComplexFunction(newAggregationFunction, primitives);
                 }
                 catch (Exception exception) {
                     System.err.println(exception.getMessage());

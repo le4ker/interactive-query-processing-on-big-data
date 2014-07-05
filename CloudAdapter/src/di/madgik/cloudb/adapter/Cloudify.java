@@ -13,10 +13,10 @@ import java.util.List;
 
 public class Cloudify {
 
-    private static HashMap<String, ArrayList<String>> rules = new HashMap<String, ArrayList<String>>();
-
     private static List<String> primitives = Arrays.asList("sum", "count", "min", "max");
-    private static List<String> metaPrimitives = new ArrayList<String>();
+
+    private static HashMap<String, ArrayList<String>> complexFunctions = new HashMap<String, ArrayList<String>>();
+    private static HashMap<String, OutputFunction> udfs = new HashMap<String, OutputFunction>();
 
     public static CloudQuery toCloud(SQLQuery query) throws Exception {
         CloudQuery cloudQuery = new CloudQuery(query);
@@ -29,6 +29,7 @@ public class Cloudify {
         Cloudify.cloudifyOrderBy(cloudQuery);
         Cloudify.cloudifyOutputColumns(cloudQuery);
         Cloudify.cloudifyOutputFunctions(cloudQuery);
+        Cloudify.cloudifyUDFs(cloudQuery);
         Cloudify.cloudifyLimit(cloudQuery);
 
         try {
@@ -44,28 +45,34 @@ public class Cloudify {
         return cloudQuery;
     }
 
-    private static boolean isPrimitive(String function) {
-        return Cloudify.primitives.contains(function);
-    }
-
-    private static boolean isMetaPrimitive(String function) {
-        return Cloudify.metaPrimitives.contains(function);
-    }
-
-    public static void addRule(String function, ArrayList<String> primitives) throws Exception {
+    public static void addComplexFunction(String function, ArrayList<String> primitives) throws Exception {
 
         if (Cloudify.isPrimitive(function)) {
             throw new Exception("Cannot define primitive aggregation functions");
         }
 
         for (String primitive : primitives) {
-            if (!Cloudify.isPrimitive(primitive) && !Cloudify.isMetaPrimitive(primitive)) {
+            if (!Cloudify.isPrimitive(primitive) && !Cloudify.isComplexFunction(primitive)) {
                 throw new Exception(primitive + " is not a primitive or meta-primitive");
             }
         }
 
-        Cloudify.rules.put(function, primitives);
-        Cloudify.metaPrimitives.add(function);
+        Cloudify.complexFunctions.put(function, primitives);
+    }
+
+    public static void addUDF(String udf, float weight) {
+        OutputFunction udfFunc = new OutputFunction();
+        udfFunc.functionName = udf;
+        udfFunc.weight = weight;
+        Cloudify.udfs.put(udf, udfFunc);
+    }
+
+    private static boolean isPrimitive(String function) {
+        return Cloudify.primitives.contains(function);
+    }
+
+    private static boolean isComplexFunction(String function) {
+        return Cloudify.complexFunctions.containsKey(function);
     }
 
     private static HashMap<String, Integer> aliases = new HashMap<String, Integer>();
@@ -81,7 +88,6 @@ public class Cloudify {
 
         return newAlias;
     }
-
 
     private static void cloudifyPrimitiveSum(CloudQuery cloudQuery, OutputFunction function) {
         OutputFunction leafFunction = new OutputFunction();
@@ -268,42 +274,82 @@ public class Cloudify {
 
     private static void cloudifyOutputFunctions(CloudQuery cloudQuery) throws Exception {
 
-        for (OutputFunction aggregationFunction : cloudQuery.sqlQuery.outputFunctions) {
+        Cloudify.reduceToPrimitives(cloudQuery.sqlQuery.outputFunctions);
 
-            if (Cloudify.isPrimitive(aggregationFunction.functionName)) {
-                Cloudify.addPrimitive(cloudQuery, aggregationFunction);
+        for (OutputFunction func : cloudQuery.sqlQuery.outputFunctions) {
+
+            if (Cloudify.isUDF(func)) {
+                continue;
             }
-            else if (Cloudify.rules.keySet().contains(aggregationFunction.functionName)) {
-
-                for (String composite : Cloudify.rules.get(aggregationFunction.functionName)) {
-
-                    if (Cloudify.isPrimitive(composite)) {
-                        OutputFunction primitiveFunction = new OutputFunction();
-                        primitiveFunction.functionName = composite;
-                        primitiveFunction.params.addAll(aggregationFunction.params);
-                        primitiveFunction.outputName = aggregationFunction.outputName;
-                        Cloudify.addPrimitive(cloudQuery, primitiveFunction);
-                    }
-                    else {
-                        for (String metaPrimitive : Cloudify.rules.get(composite)) {
-                            if (Cloudify.isPrimitive(metaPrimitive)) {
-                                OutputFunction metaPrimitiveFunction = new OutputFunction();
-                                metaPrimitiveFunction.functionName = metaPrimitive;
-                                metaPrimitiveFunction.params.addAll(aggregationFunction.params);
-                                metaPrimitiveFunction.outputName = aggregationFunction.outputName;
-                                Cloudify.addPrimitive(cloudQuery, metaPrimitiveFunction);
-                            }
-                            // else TODO: handle multiple layers of meta primitives...
-                        }
-                    }
-                }
+            else if (Cloudify.isPrimitive(func.functionName)) {
+                Cloudify.addPrimitive(cloudQuery, func);
             }
             else {
-                throw new Exception (aggregationFunction.functionName + " is not a primitive, nor a known complex function");
+                throw new Exception (func.functionName + " is not a primitive, a UDF, or a known complex function");
             }
         }
 
         Cloudify.aliases.clear();
+    }
+
+    private static void reduceToPrimitives(List<OutputFunction> outputFunctions) {
+
+        for (int i = 0; i < outputFunctions.size(); ) {
+
+           OutputFunction func = outputFunctions.get(i);
+
+            if (Cloudify.isUDF(func)) {
+                i++;
+                continue;
+            }
+
+            if (Cloudify.isPrimitive(func.functionName)) {
+                i++;
+                continue;
+            }
+
+            if (Cloudify.isComplexFunction(func.functionName)) {
+                List<OutputFunction> reduction = Cloudify.reduceComplexFuncToPrimitives(func);
+                outputFunctions.remove(i);
+                outputFunctions.addAll(reduction);
+            }
+        }
+    }
+
+    private static List<OutputFunction> reduceComplexFuncToPrimitives(OutputFunction func) {
+
+        List<String> reductions = Cloudify.complexFunctions.get(func.functionName);
+
+        /* Find the primitive reduction */
+
+        for (int i = 0; i < reductions.size(); ) {
+
+            String comp = reductions.get(i);
+
+            if (Cloudify.isPrimitive(comp)) {
+                i++;
+                continue;
+            }
+
+            if (Cloudify.isComplexFunction(comp)) {
+                reductions.remove(i);
+                reductions.addAll(Cloudify.complexFunctions.get(comp));
+            }
+        }
+
+        List<OutputFunction> primitives = new ArrayList<OutputFunction>();
+
+        for (String reduction : reductions) {
+
+            OutputFunction primitive = new OutputFunction();
+            primitive.functionName = reduction;
+            primitive.params = func.params;
+            primitive.outputName = func.outputName;
+
+            primitives.add(primitive);
+        }
+
+        return primitives;
     }
 
     private static void addPrimitive(CloudQuery cloudQuery, OutputFunction function) {
@@ -361,5 +407,21 @@ public class Cloudify {
         cloudQuery.leafQuery.limit= cloudQuery.sqlQuery.limit;
         cloudQuery.internalQuery.limit = cloudQuery.sqlQuery.limit;
         cloudQuery.rootQuery.limit = cloudQuery.sqlQuery.limit;
+    }
+
+    private static void cloudifyUDFs(CloudQuery cloudQuery) {
+
+        for (OutputFunction func : cloudQuery.sqlQuery.outputFunctions) {
+
+            if (Cloudify.isUDF(func)) {
+                cloudQuery.leafQuery.outputFunctions.add(func);
+                cloudQuery.internalQuery.outputFunctions.add(func);
+                cloudQuery.rootQuery.outputFunctions.add(func);
+            }
+        }
+    }
+
+    private static boolean isUDF(OutputFunction func) {
+        return Cloudify.udfs.containsKey(func.functionName);
     }
 }
