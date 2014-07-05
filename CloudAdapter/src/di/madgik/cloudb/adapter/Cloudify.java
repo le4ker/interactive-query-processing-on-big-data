@@ -13,6 +13,16 @@ import java.util.List;
 
 public class Cloudify {
 
+
+    private static HashMap<String, Float> weights;
+    static
+    {
+        weights = new HashMap<String, Float>();
+        weights.put("sum", 1.0f);
+        weights.put("count", 1.0f);
+        weights.put("min", 1.0f);
+        weights.put("max", 1.0f);
+    }
     private static List<String> primitives = Arrays.asList("sum", "count", "min", "max");
 
     private static HashMap<String, ArrayList<String>> complexFunctions = new HashMap<String, ArrayList<String>>();
@@ -65,6 +75,25 @@ public class Cloudify {
         udfFunc.functionName = udf;
         udfFunc.weight = weight;
         Cloudify.udfs.put(udf, udfFunc);
+    }
+
+    public static float getWeightOf(String func) {
+
+        float totalWeight = 0.0f;
+
+        if (Cloudify.isPrimitive(func)) {
+            totalWeight = Cloudify.weights.get(func);
+        }
+        else if (Cloudify.udfs.containsKey(func)) {
+            totalWeight = Cloudify.udfs.get(func).weight;
+        }
+        else {
+            for (String function : Cloudify.complexFunctions.get(func)) {
+                totalWeight += getWeightOf(function);
+            }
+        }
+
+        return totalWeight;
     }
 
     private static boolean isPrimitive(String function) {

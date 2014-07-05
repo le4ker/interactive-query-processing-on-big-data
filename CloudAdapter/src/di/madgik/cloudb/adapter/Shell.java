@@ -31,6 +31,9 @@ public class Shell {
             else if (queries[0].compareTo("newudf") == 0) {
                 Cloudify.addUDF(queries[1], Float.parseFloat(queries[2]));
             }
+            else if(queries[0].compareTo("weight") == 0) {
+                System.out.println(Cloudify.getWeightOf(queries[1]));
+            }
             else if (queries[0].compareTo("new") == 0) {
 
                 /* Example: new avg sum count */
