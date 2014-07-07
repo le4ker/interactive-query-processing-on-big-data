@@ -78,7 +78,7 @@ public class Shell {
             CloudQuery cloudQuery = Cloudify.toCloud(query);
 
             System.out.println(cloudQuery.toAdpSqlString());
-
+            System.out.println("Weight of query: " + Float.toString(Cloudify.weightOfQuery(query, 1, Cloudify.TreeQueryType.All)));
         }
         catch(Exception exception) {
             System.err.println(exception.getMessage());

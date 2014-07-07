@@ -13,6 +13,7 @@ import java.util.List;
 
 public class Cloudify {
 
+    public static enum TreeQueryType { Root, Internal, Leaf, All };
 
     private static HashMap<String, Float> weights;
     static
@@ -27,6 +28,58 @@ public class Cloudify {
 
     private static HashMap<String, ArrayList<String>> complexFunctions = new HashMap<String, ArrayList<String>>();
     private static HashMap<String, OutputFunction> udfs = new HashMap<String, OutputFunction>();
+
+    public static float weightOfQuery(SQLQuery query, int tuples) throws Exception {
+        return Cloudify.weightOfQuery(query, tuples, TreeQueryType.All);
+    }
+
+    public static float weightOfQuery(SQLQuery query, int tuples, TreeQueryType type) throws Exception {
+
+        CloudQuery cloudQuery = Cloudify.toCloud(query);
+
+        float totalWeight = 0.0f;
+
+        switch (type) {
+            case Root:
+
+                for (OutputFunction func : cloudQuery.rootQuery.outputFunctions) {
+                    totalWeight += Cloudify.getWeightOf(func.functionName);
+                }
+
+                break;
+            case Internal:
+
+                for (OutputFunction func : cloudQuery.internalQuery.outputFunctions) {
+                    totalWeight += Cloudify.getWeightOf(func.functionName);
+                }
+
+                break;
+            case Leaf:
+
+                for (OutputFunction func : cloudQuery.leafQuery.outputFunctions) {
+                    totalWeight += Cloudify.getWeightOf(func.functionName);
+                }
+
+                break;
+            case All:
+
+                for (OutputFunction func : cloudQuery.rootQuery.outputFunctions) {
+                    totalWeight += Cloudify.getWeightOf(func.functionName);
+                }
+
+                for (OutputFunction func : cloudQuery.internalQuery.outputFunctions) {
+                    totalWeight += Cloudify.getWeightOf(func.functionName);
+                }
+
+                for (OutputFunction func : cloudQuery.leafQuery.outputFunctions) {
+                    totalWeight += Cloudify.getWeightOf(func.functionName);
+                }
+
+                break;
+        }
+
+        return totalWeight * tuples;
+    }
 
     public static CloudQuery toCloud(SQLQuery query) throws Exception {
         CloudQuery cloudQuery = new CloudQuery(query);
