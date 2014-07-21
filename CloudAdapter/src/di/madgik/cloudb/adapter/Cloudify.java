@@ -374,7 +374,7 @@ public class Cloudify {
         Cloudify.aliases.clear();
     }
 
-    private static void reduceToPrimitives(List<OutputFunction> outputFunctions) {
+    private static void reduceToPrimitives(List<OutputFunction> outputFunctions) throws Exception {
 
         for (int i = 0; i < outputFunctions.size(); ) {
 
@@ -382,18 +382,20 @@ public class Cloudify {
 
             if (Cloudify.isUDF(func)) {
                 i++;
-                continue;
             }
-
-            if (Cloudify.isPrimitive(func.functionName)) {
+            else if (Cloudify.isPrimitive(func.functionName)) {
                 i++;
                 continue;
             }
-
-            if (Cloudify.isComplexFunction(func.functionName)) {
+            else if (Cloudify.isComplexFunction(func.functionName)) {
                 List<OutputFunction> reduction = Cloudify.reduceComplexFuncToPrimitives(func);
                 outputFunctions.remove(i);
                 outputFunctions.addAll(reduction);
+            }
+            else {
+                /* Unknown function */
+
+                throw new Exception(func.functionName + " is not defined");
             }
         }
     }
@@ -471,8 +473,8 @@ public class Cloudify {
 
     private static void cloudifyGroupBy(CloudQuery cloudQuery) {
         for(Column column : cloudQuery.sqlQuery.groupBy) {
-            cloudQuery.leafQuery.groupBy.add(new Column(column));
-            cloudQuery.internalQuery.groupBy.add((new Column(column)));
+            /* Group bys only in the root level */
+
             cloudQuery.rootQuery.groupBy.add(new Column(column));
         }
     }
@@ -486,9 +488,18 @@ public class Cloudify {
     }
 
     private static void cloudifyLimit(CloudQuery cloudQuery) {
-        cloudQuery.leafQuery.limit= cloudQuery.sqlQuery.limit;
-        cloudQuery.internalQuery.limit = cloudQuery.sqlQuery.limit;
-        cloudQuery.rootQuery.limit = cloudQuery.sqlQuery.limit;
+        if (cloudQuery.sqlQuery.orderBy.size() == 0) {
+            cloudQuery.leafQuery.limit= cloudQuery.sqlQuery.limit;
+            cloudQuery.internalQuery.limit = cloudQuery.sqlQuery.limit;
+            cloudQuery.rootQuery.limit = cloudQuery.sqlQuery.limit;
+        }
+        else {
+            /* When a query contains both order by and limit,
+            limit only in the root level
+            */
+
+            cloudQuery.rootQuery.limit = cloudQuery.sqlQuery.limit;
+        }
     }
 
     private static void cloudifyUDFs(CloudQuery cloudQuery) {

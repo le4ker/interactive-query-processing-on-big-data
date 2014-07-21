@@ -1,0 +1,4 @@
+ select l.l_returnflag, l.l_linestatus
+ from lineitem l
+ where l.l_shipdate <= '1998-12-01'
+ group by l.l_returnflag, l.l_linestatus
